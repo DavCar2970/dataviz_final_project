@@ -7,6 +7,15 @@ output:
     toc_float: true
 ---
 
+---
+title: "Data Visualization for Exploratory Data Analysis"
+output: 
+  html_document:
+    keep_md: true
+    toc: true
+    toc_float: true
+---
+
 # Data Visualization Project 03
 
 
@@ -19,6 +28,7 @@ Using the dataset obtained from FSU's [Florida Climate Center](https://climatece
 
 ```{r, message=FALSE, warning=FALSE}
 library(tidyverse)
+library(ggridges)
 weather_tpa <- read_csv("https://raw.githubusercontent.com/reisanar/datasets/master/tpa_weather_2022.csv")
 # random sample 
 sample_n(weather_tpa, 4)
@@ -33,8 +43,18 @@ Using the 2022 data:
 ```{r, echo = FALSE, out.width="80%", fig.align='center'}
 knitr::include_graphics("https://github.com/reisanar/figs/raw/master/tpa_max_temps_facet.png")
 ```
-
 Hint: the option `binwidth = 3` was used with the `geom_histogram()` function.
+
+Answer:
+```{r}
+months.labs <- c("January", "February", "March", "April", "May", "June", "July", "August", "September", 
+                 "October", "November", "December")
+p <- ggplot(data = weather_tpa, mapping = aes(x = max_temp, fill = month))
+p + geom_histogram(binwidth = 3,  ncol = 4) + facet_wrap(~month) + theme_bw() + labs(x = "Maximum Temperatures", y = "Number of Days")
+
+
+```
+
 
 (b) Create a plot like the one below:
 
@@ -44,6 +64,15 @@ knitr::include_graphics("https://github.com/reisanar/figs/raw/master/tpa_max_tem
 
 Hint: check the `kernel` parameter of the `geom_density()` function, and use `bw = 0.5`.
 
+**Answer:**
+```{r}
+p <- ggplot(data = weather_tpa, mapping = aes(x = max_temp))
+p + geom_density(fill = "darkgrey", bw = 0.5, size = 1, kernel = "epanechnikov")
+```
+
+
+
+
 (c) Create a plot like the one below:
 
 ```{r, echo = FALSE, out.width="80%", fig.align='center'}
@@ -51,6 +80,12 @@ knitr::include_graphics("https://github.com/reisanar/figs/raw/master/tpa_max_tem
 ```
 
 Hint: default options for `geom_density()` were used. 
+
+**Answer**
+```{r}
+p <- ggplot(data = weather_tpa, mapping = aes(x = max_temp, fill = month))
+p + geom_density() + facet_wrap(~month) + theme_bw()
+```
 
 (d) Generate a plot like the chart below:
 
@@ -60,9 +95,23 @@ knitr::include_graphics("https://github.com/reisanar/figs/raw/master/tpa_max_tem
 ```
 
 Hint: use the`{ggridges}` package, and the `geom_density_ridges()` function paying close attention to the `quantile_lines` and `quantiles` parameters. The plot above uses the `plasma` option (color scale) for the _viridis_ palette.
+```{r}
+ p <- ggplot(weather_tpa, aes(x = max_temp, y = factor(month), fill = stat(x))) 
+p +  geom_density_ridges_gradient(scale = 3, rel_min_height = 0.01, quantile_lines = TRUE, alpha = 0.75,
+                      quantiles = 2) +
+  scale_fill_viridis_c(name = "", option = "C") + 
+  labs(title = 'Maximum temperatures(in Fahrenheit degrees)', y = "Month of year")
+  
+```
 
 
 (e) Create a plot of your choice that uses the attribute for precipitation _(values of -99.9 for temperature or -99.99 for precipitation represent missing data)_.
+```{r}
+p <- ggplot(data = weather_tpa, mapping = aes(x = min_temp, fill = month))
+p + geom_density() + facet_wrap(~month)
+```
+
+
 
 
 
@@ -89,56 +138,21 @@ Make sure to include a copy of the dataset in the `data/` folder, and reference 
 (to get the "raw" data from any of the links listed above, simply click on the `raw` button of the GitHub page and copy the URL to be able to read it in your computer using the `read_csv()` function)
 
 
-### Option (B): Data on Concrete Strength 
-
-Concrete is the most important material in **civil engineering**. The concrete compressive strength is a highly nonlinear function of _age_ and _ingredients_. The dataset used here is from the [UCI Machine Learning Repository](https://archive.ics.uci.edu/ml/index.php), and it contains 1030 observations with 9 different attributes 9 (8 quantitative input variables, and 1 quantitative output variable). A data dictionary is included below: 
-
-
-Variable                      |    Notes                
-------------------------------|-------------------------------------------
-Cement                        | kg in a $m^3$ mixture             
-Blast Furnace Slag            | kg in a $m^3$ mixture  
-Fly Ash                       | kg in a $m^3$ mixture             
-Water                         | kg in a $m^3$ mixture              
-Superplasticizer              | kg in a $m^3$ mixture
-Coarse Aggregate              | kg in a $m^3$ mixture
-Fine Aggregate                | kg in a $m^3$ mixture      
-Age                           | in days                                             
-Concrete compressive strength | MPa, megapascals
-
-
-Below we read the `.csv` file using `readr::read_csv()` (the `readr` package is part of the `tidyverse`)
-
 ```{r}
-concrete <- read_csv("../data/concrete.csv", col_types = cols())
+comments_data <- read_csv("https://raw.githubusercontent.com/reisanar/datasets/master/rmp_wit_comments.csv")
 ```
-
-
-Let us create a new attribute for visualization purposes, `strength_range`: 
-
 ```{r}
-new_concrete <- concrete %>%
-  mutate(strength_range = cut(Concrete_compressive_strength, 
-                              breaks = quantile(Concrete_compressive_strength, 
-                                                probs = seq(0, 1, 0.2))) )
+
+library(tidytext)
+comments_data
+
+comment_words <- comments_data %>% 
+ unnest_tokens(word, comments)
+comment_words %>% group_by(word) %>% summarise(frequency = n()) 
+
+ggplot(data = sample_n(comment_words, 50), mapping = aes(x = word)) + geom_bar() + coord_flip()
 ```
 
-
-
-1. Explore the distribution of 2 of the continuous variables available in the dataset. Do ranges make sense? Comment on your findings.
-
-2. Use a _temporal_ indicator such as the one available in the variable `Age` (measured in days). Generate a plot similar to the one shown below. Comment on your results.
-
-```{r, echo = FALSE, out.width="80%", fig.align='center'}
-knitr::include_graphics("https://github.com/reisanar/figs/raw/master/concrete_strength.png")
-```
-
-
-3. Create a scatterplot similar to the one shown below. Pay special attention to which variables are being mapped to specific aesthetics of the plot. Comment on your results. 
-
-```{r, echo = FALSE, out.width="80%", fig.align='center'}
-knitr::include_graphics("https://github.com/reisanar/figs/raw/master/cement_plot.png")
-```
 
 
 
