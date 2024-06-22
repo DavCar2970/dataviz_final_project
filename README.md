@@ -1,8 +1,8 @@
 # Data Visualization and Reproducible Research
 
-> Firstname Lastname. 
+> David Carbajal. 
 
-Learn more about me in my [GitHub profile page](https://github.com/reiminer). 
+Learn more about me in my [GitHub profile page](https://github.com/DavCar2970). 
 
 
 The following is a sample of products created during the _"Data Visualization and Reproducible Research"_ course.
@@ -10,36 +10,20 @@ The following is a sample of products created during the _"Data Visualization an
 
 ## Project 01
 
-In the `project_01/` folder you can find... _[add short description of your revised project here]_
-
-**Sample data visualization:** 
-
-_[include your favorite visualization from this project here]_
-<img src="https://github.com/reisanar/figs/raw/master/echarts.png" width="70%" height="70%">
+In the `project_01/` folder you can find the datasets and project 1 report file including the HTML. This project is concerned with the traffic data in Minnesota, and discovers the correlation between the weather and traffic data.
 
 
 ## Project 02
 
-In this project, I explored ... _[short description of your revised project goes here]_ Find the code and report in the `project_02/` folder.
+In this project, I explored the datasets concerning Florida Lakes and houses in the West Roxbury area. Find the code and report in the `project_02/` folder.
 
-**Sample data visualization:** 
-
-_[include your favorite visualization from this project here]_
-<img src="https://raw.githubusercontent.com/reisanar/dataviz_final_project/main/figures/fl_higher_ed.png" width="80%" height="80%">
-
-(you can place your figures in the `figures/` folder and use the `![](path_to_picture)` option to add the pictures here)
 
 
 ## Project 03
 
-In this project, I explored ... _[short description of the data visualizations you for this part of the project produced goes here]_
-
-**Sample data visualization:** 
-
-_[include your favorite visualization from this project here]_
-<img src="https://github.com/reisanar/figs/raw/master/concrete_density.png" width="80%" height="80%">
+In this project, I explored text data from comments from rate my professor. In addition, I delved into making data visualizations about weather data, specifically looking at max temperatures for each month.
 
 
 ### Moving Forward
 
-_Please add here a short reflection on what you learned and what you plan to continue exploring in terms of data visualization, data storytelling, reproducible research, and/or related topics._
+What I learned is how to create several varieties of data visualizations, and how to further improve them with labels, colors, and visualization principles such as avoiding chart junk. I am not sure if I will continue data visualization as I am a Computer Science major but if the opportunity comes by, data visualizations may come in handy someday.
