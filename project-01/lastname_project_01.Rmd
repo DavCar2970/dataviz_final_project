@@ -1,12 +1,119 @@
 ---
-title: "Mini-Project 01"
-output: 
-  html_document:
-    keep_md: true
-    toc: true
-    toc_float: true
+title: "Data Visualization - Mini-Project 1"
+author: "David Carbajal `dcarbajal8681@floridapoly.edu`"
+output: html_notebook
 ---
 
-# Data Visualization Project 01
 
-_revised version of mini-project 01 goes here_
+```{r}
+library(tidyverse)
+library(lubridate)
+```
+
+
+Step 1: Read the data and check it
+```{r}
+traffic_data <- read_csv("https://raw.githubusercontent.com/reisanar/datasets/trafficMN.csv")
+```
+
+```{r}
+head(traffic_data)
+```
+
+
+A summary of the data showing the traffic incidents per weather type
+```{r}
+traffic_data %>% filter(traffic_volume > 0) %>% group_by(weather_main) %>% summarise(traffic_per_weather = n()) %>% arrange(desc(traffic_per_weather))
+```
+
+Data visualization showing number of traffic incidents based on weather. Most traffic incidents occured when the sky had clouds. In regards to data visualization principles, I considered the following when making this chart:
+
+* Chart Junk: I removed the grid since it serves no purpose for this chart. The theme used was the default theme since it is more minimal.
+
+*Layout: This is a histogram chart with the type of weather and its corresponding number of traffic incidents. No faceting was used since there would be too many individual charts.
+
+*Text: Text was not included on the lines since a legend and the different colors differentiate the line graphs for Remodel.
+
+*Color: No specific palette was included
+
+```{r}
+p <- ggplot(data = traffic_data, mapping = aes(x = weather_main))
+p + geom_bar() + labs(title = "Traffic Incidents Per Weather Type", x = "Type of Weather", y = "Number of Traffic Incidents") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+```
+
+This data visualization shows the traffic incident number based on the cloudy weather data type. It was faceted by weather description for more specificity, and there were 4 categories of cloudy weather as shown below.
+```{r}
+cloudy_weather_data <- traffic_data %>% filter(weather_main == "Clouds")
+p <- ggplot(data = cloudy_weather_data, mapping = aes(x = weather_main)) + labs(x = "")
+p + geom_bar() + facet_grid(weather_description ~ .) + coord_flip() + labs(x = "", y = "Number of Traffic Incidents") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+```
+
+
+This data visualization shows the number of traffic incidents per all types of rainy weather(i.e. freezing rain, heavy intensity rain, etc.). The most traffic incidents occurred with light rain. My expectation was that there would be more traffic in heavy intensity rain because of the low visibility, but these charts demonstrated otherwise.
+
+In regards to data visualization principles, I considered the following when making this chart:
+
+* Chart Junk: I avoided too much cluttering in the graph by removing the grid lines in the background and using a black and white theme
+
+*Layout: To facilitate visualization, the number of traffic incidents per type were faceted by the rainy weather type.
+
+*Text: The title explains the purpose of this visualization.
+
+*Color: No specific palette was used.
+```{r}
+rainy_weather_data <- traffic_data %>% filter(weather_main == "Rain")
+p <- ggplot(data = rainy_weather_data, mapping = aes(x = weather_main)) 
+p + geom_bar() + facet_wrap(~ weather_description) + theme_bw() + labs(x = "", y = "", title = "Number of Traffic Incidents per Rainy Weather Type") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+
+```
+
+
+This data visualization shows the number of traffic incidents per month. July had the most traffic, and the amount of traffic appears to decrease in late winter and early/mid autumn.
+```{r}
+p <- ggplot(data = traffic_data, mapping = aes(x = month(date_time)))
+ p + geom_bar() +
+   labs(x = "Month",
+           y = "",
+          title = "NUMBER OF TRAFFIC INCIDENTS PER MONTH") + 
+   theme(plot.title = element_text(size = rel(0.8)),
+            legend.title = element_text(size = rel(0.35)),
+            plot.caption = element_text(size = rel(0.35)),
+            legend.position = "top", panel.grid.major = element_blank(), panel.grid.minor = element_blank()) 
+```
+
+> What were the original charts you planned to create for this assignment?
+
+The original charts I planned to create were charts for other data sets such as showing the major and minor key songs for a data set about Billboard Hits. However, I chose the trafficMN.csv data instead.
+
+> What story could you tell with your plots?
+
+We start off with the plot telling us how many traffic incidents occurred per type of weather. Curiously, the cloudy weather had a lot of incidents, but the rainy incidents had varying descriptions. Therefore, it would be interesting to see how many traffic incidents there were based on the various rainy and cloudy weather types. Finally, as previously mentioned in the motivation, seeing the change in the traffic based on time of year is meaningful, where the plot I made shows how the peak of summer sees the most traffic, probably due to summer vacation.
+
+> How did you apply the principles of data visualizations and design for this assignment?
+
+One of the principles was avoiding chart junk in the tables. The tables I included did not include unnecessary legends. In addition, the grid in the background was removed because it was unnecessary as well. Because only the counts of certain attributes were taken into consideration, the grid background for every plot was removed using element_blank(). Next, to avoid making the user tilt their head sometimes, I mostly removed the y-labels for each plot and instead made the y axis clear in the title(like in the last plot). In addition, I was able to re-label the plot and adjust the sizes of the text occasionally using the theme() function. Faceting the data was also a part of the design. For example, the cloudy weather had sub types of cloudy weather such as overcast or scattered clouds. It was very useful to observe the traffic incident number not just on the main weather being clouds, but also for different kinds of cloudy weather. This same reasoning was also applied for rainy weather since there was light rain, freezing rain, etc. 
+
+
+
+```{r}
+election
+party_colors <- c("#2E74C0", "#CB454A") 
+
+p0 <- ggplot(data = subset(election, st %nin% "DC"),
+             mapping = aes(x = r_points,
+                           y = reorder(state, r_points),
+                           color = party))
+
+p1 <- p0 + geom_vline(xintercept = 0, color = "gray30") +
+    geom_point(size = 2)
+
+p2 <- p1 + scale_color_manual(values = party_colors)
+
+p3 <- p2 + scale_x_continuous(breaks = c(-30, -20, -10, 0, 10, 20, 30, 40),
+                              labels = c("30\n (Clinton)", "20", "10", "0",
+                                         "10", "20", "30", "40\n(Trump)"))
+
+p3 + facet_wrap(~ census, ncol=1, scales="free_y") +
+    guides(color=FALSE) + labs(x = "Point Margin", y = "") +
+    theme(axis.text=element_text(size=8))
+```
